@@ -1,5 +1,4 @@
 import math
-import random
 import hashlib
 import binascii
 from collections import deque
@@ -89,12 +88,6 @@ class InvertibleBloomFilter:
             return None
         return result
 
-def write_edges(path, edges):
-    with open(path, "w") as f:
-        for u, v in sorted(edges):
-            f.write(f"{u} {v}\n")
-
-
 def load_edges(path):
     edges = set()
     with open(path) as f:
@@ -108,32 +101,9 @@ def load_edges(path):
             edges.add((u, v))
     return edges
 
-
-def generate_edge_files():
-    rng = random.Random(0)
-    nodes = list(range(1, 21))
-
-    all_edges = [(u, v) for i, u in enumerate(nodes) for v in nodes[i + 1 :]]
-    edges_A = set(rng.sample(all_edges, 60))
-
-    change = max(1, int(len(edges_A) * 0.05))
-    removed = set(rng.sample(list(edges_A), change))
-    remaining = edges_A - removed
-
-    available = list(set(all_edges) - edges_A)
-    added = set(rng.sample(available, change))
-    edges_B = remaining | added
-
-    write_edges("graph_A.edges", edges_A)
-    write_edges("graph_B.edges", edges_B)
-
-    return "graph_A.edges", "graph_B.edges"
-
 if __name__ == "__main__":
-    a_path, b_path = generate_edge_files()
-
-    A = load_edges(a_path)
-    B = load_edges(b_path)
+    A = load_edges("graph_A.edges")
+    B = load_edges("graph_B.edges")
 
     diff_size = len(A ^ B)
 
